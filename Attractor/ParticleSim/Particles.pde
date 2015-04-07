@@ -15,22 +15,19 @@ class ParticleSystem {
     particles.add(new Particle(origin));
   }
   
-  void addAttractor() {
-    attractors.add(new Attractor(new PVector(width/2, height/2))); 
+  void addAttractor(PVector loc, boolean move) {
+    attractors.add(new Attractor(loc, move)); 
   }
 
   void run() {
     for (int i = attractors.size()-1; i>=0; i--) {
       Attractor a = attractors.get(i);
-      a.run();
+      a.run(particles);
     }
     
     for (int i = particles.size()-1; i >= 0; i--) {
       Particle p = particles.get(i);
       p.run();
-//      if (p.isDead()) {
-//        particles.remove(i);
-//      }
     }
   }
 }
@@ -69,6 +66,10 @@ class Particle {
     ellipse(location.x,location.y,8,8);
   }
   
+  void addForce(PVector v){
+    velocity.add(v);
+  }
+  
   void wallCheck(){
     if (location.y >= 600)
     {
@@ -104,31 +105,53 @@ class Particle {
 
 class Attractor{
   PVector location;
-  float forceRadius = 120;
+  float forceRadius = 150;
   float radius = 50;
+  boolean moving = false;
+  boolean moveRight = true;
 
-  Attractor(PVector l) {
+  Attractor(PVector l, boolean m) {
     location = l.get();
+    moving = m;
   }
 
-  void run() {
-    //update();
+  void run(ArrayList<Particle> particles) {
+    update(particles);
     display();
   }
 
-  // Method to update location
-  void update() {
-
+  // move & Check each particle if its in range
+  void update(ArrayList<Particle> particles) {
+    if (moving){
+      if (location.x <= width/6) moveRight = true;
+      if (location.x >= (width/6)*5) moveRight = false;
+      
+      if (moveRight) location.x += 1;
+      else location.x -= 1;
+    }
+    //Check each particle
+    for (int i = particles.size()-1; i >= 0; i--) {
+      Particle p = particles.get(i);
+      float dist = PVector.dist(p.location, location);
+      if (dist <= forceRadius/2)
+      {
+        PVector force = location.get();
+        force.sub(p.location.get());
+        float invDistSq = 1 / (dist * dist);
+        force.mult(invDistSq * attractorStrength);
+        p.addForce(force);
+      }
+    }
   }
 
   // Method to display
   void display() {
     stroke(255, 0);
     
-    fill(255, 5);
+    fill(255, 200);
     ellipse(location.x,location.y,forceRadius,forceRadius);
     
-    fill(41, 128, 185, 100);
+    fill(41, 128, 185, 150);
     ellipse(location.x,location.y,radius,radius);
   }
 }

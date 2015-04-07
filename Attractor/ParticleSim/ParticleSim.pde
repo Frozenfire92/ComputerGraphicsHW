@@ -1,16 +1,19 @@
 boolean showWalls = true;
 boolean isForce = false;
 float collisionForce = 0.5;
+float attractorStrength = 4; //higher is stronger
 
 ParticleSystem ps;
 
 void setup() {
   size(640,640);
   ps = new ParticleSystem(new PVector(width/2,100));
+  ps.addAttractor(new PVector(width/4, height/4), false);
+  ps.addAttractor(new PVector((width/4)*3, height/4), false);
+  ps.addAttractor(new PVector(width/2, (height/4)*3), true);
   for (int i=0; i<100; i++)
   {
     ps.addParticle();
-    ps.addAttractor();
   }
 }
 
