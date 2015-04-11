@@ -28,6 +28,3 @@ void setup() {
   else name = "verticalConstantLg.png";
   save(name);
 }
-
-void draw() {
-}
