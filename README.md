@@ -1,2 +1,4 @@
-# ComputerGraphics
-Homework from my undergrad course in computer graphics
+# Computer Graphics Homework
+Homework from my undergrad course
+
+All made with [Processing](https://processing.org/)
